@@ -118,7 +118,7 @@ class Server {
                     console.info(`> Ups, something went wrong: ${error}`);
                 }
 
-                console.info(`> Ready on http://localhost:${port}`);
+                console.info(`> Ready on http://${address}:${port}`);
             });
         } catch (error) {
             console.info(`> Ups, something went wrong: ${error}`);
