@@ -12,7 +12,7 @@ class Server {
             
             const app = new Express();
 
-            const manifest = JSON.parse(fs.readFileSync(process.env.BUILD_DIR + '/asset-manifest.json', 'utf-8'));
+            const manifest = JSON.parse(fs.readFileSync(`${process.env.BUILD_DIR}/asset-manifest.json`, 'utf-8'));
 
             if (!manifest) {
                 throw new Error("You've to build the project, please, run `npm run build` or `yarn build`.");
@@ -20,7 +20,7 @@ class Server {
 
             app.use(helmet());
             app.use(compression({ threshold: 0 }));
-            app.use('/static', Express.static(process.env.BUILD_DIR + '/static'));
+            app.use('/static', Express.static(`${process.env.BUILD_DIR}/static`));
 
             app.get('*', (req, res, next) => {
                 res.header('X-Powered-By', null);
@@ -29,7 +29,7 @@ class Server {
 
             app.get('/', (req, res) => {
                 res.header('Content-Type', 'text/html');
-                res.send(fs.readFileSync(process.env.BUILD_DIR + '/index.html', 'utf-8'));
+                res.send(fs.readFileSync(`${rocess.env.BUILD_DIR}/index.html`, 'utf-8'));
                 res.end();
             });
 
@@ -37,9 +37,9 @@ class Server {
 
             if (process.env.ENABLE_HTTPS === 'true') {
                 options = {
-                    key: fs.readFileSync(process.env.CERT_DIR + '/server.key'),
-                    cert: fs.readFileSync(process.env.CERT_DIR + '/server.crt'),
-                    ca: fs.readFileSync(process.env.CERT_DIR + '/server.csr')
+                    key: fs.readFileSync(`${process.env.CERT_DIR}/server.key`),
+                    cert: fs.readFileSync(`${process.env.CERT_DIR}/server.crt`),
+                    ca: fs.readFileSync(`${process.env.CERT_DIR}/server.csr`)
                 };
             } else {
                 options = {
@@ -54,7 +54,7 @@ class Server {
                 if (res.push) {
                     console.info('> Pushing ', req.url);
 
-                    [
+                    let content = [
                         {
                             url: '/', 
                             contentType: 'text/html', 
@@ -75,7 +75,24 @@ class Server {
                             contentType: 'text/css', 
                             filePath: `${process.env.BUILD_DIR}/${manifest['main.css']}`
                         }
-                    ].map(({ url, contentType, filePath }) => {
+                    ];
+
+                    if (process.env.NODE_ENV !== 'production') {
+                        content.push([
+                            {
+                                url: `/${manifest['main.css.map']}`, 
+                                contentType: 'text/css', 
+                                filePath: `${process.env.BUILD_DIR}/${manifest['main.css.map']}`
+                            },
+                            {
+                                url: `/${manifest['main.js.map']}`, 
+                                contentType: 'application/javascript', 
+                                filePath: `${process.env.BUILD_DIR}/${manifest['main.js.map']}`
+                            }
+                        ])
+                    }
+
+                    content.map(({ url, contentType, filePath }) => {
                         const stream = res.push(url, {
                             status: 200,
                             method: "GET",
