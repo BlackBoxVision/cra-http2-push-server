@@ -21,22 +21,31 @@ npm install --save cra-http2-push-server
 
 ## Usage
 
-You have to define the following enviroment variables:
+You have to define the following `enviromental values`:
 
 ```bash 
-BUILD_DIR = `Location to the build directory of your create-react-app. It has no default value.`
-ADDRESS = `The ip where it will be running, if not passed it will use 'localhost' as default.`
-PORT = `The port where it will be exposed, if not passed it will use '8080' as default.`
-ENABLE_HTTPS = `true || false. This is necessary for http2 server, to know how it will execute. If 'false' or undefined it will use http for http2.`
-CERT_DIR = `If ENABLE_HTTPS is set to 'true', then you have to specify your certificate directory. The server will expect your files to be named like server.crt, server.key, server.csr.`
+#.env
+
+BUILD_DIR=/home/user/project-name/build
+ADDRESS=localhost
+PORT=8080
+ENABLE_HTTPS=true
+CERT_DIR=/home/user/project-name/certs
 ```
-After having this enviromental values defined you then can import the server, and start it: 
+- BUILD_DIR: Location to the build directory of your create-react-app. It has no default value.
+- ADDRESS: The ip where it will be running, if not passed it will use 'localhost' as default.
+- PORT: The port where it will be exposed, if not passed it will use '8080' as default.
+- ENABLE_HTTPS: `true || false`. This is necessary for http2 server, to know how it will execute. If 'false' or undefined it will use http for http2.
+- CERT_DIR: If ENABLE_HTTPS is set to 'true', then you have to specify your certificate directory. The server will expect your files to be named like server.crt, server.key, server.csr.
+
+After having this `enviromental values` defined you then can import the server, and start it: 
 
 ```javascript
 # index.js
-const http2PushServer = require('cra-http2-push-server');
 
-http2PushServer.start();
+const Http2Server = require('cra-http2-push-server');
+
+Http2Server.start();
 ```
 
 ## Issues
